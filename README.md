@@ -33,9 +33,12 @@ sudo apt install docker.io docker-compose
 
 # Clone and Start the Environment
 ```bash
-git clone https://github.com/your-name/soc-lab-environment.git
-cd soc-lab-environment
-docker-compose up -d
+git clone https://github.com/CatherineChen-CyberSecurity/wazuh-suricata-elk-docker.git
+cd wazuh-suricata-elk-docker
+docker compose up -d
+
+cd wazuh-server
+docker compose up -d
 ```
 
 ---
