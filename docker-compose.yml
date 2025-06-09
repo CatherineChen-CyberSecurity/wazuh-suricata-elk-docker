@@ -1,0 +1,38 @@
+services:
+
+  suricata:
+    image: jasonish/suricata:latest
+    container_name: suricata
+    privileged: true
+    networks:
+      - monitoring-net
+    volumes:
+      - ./suricata-logs:/var/log/suricata
+      - ./suricata/:/etc/suricata/
+    command: ["suricata", "-i", "eth0", "-c", "/etc/suricata/suricata.yaml", "--init-errors-fatal"]
+
+  victim-server:
+    build:
+      context: ./victim-server
+      dockerfile: Dockerfile
+      args:
+        - MANAGER_IP=172.19.0.3
+    container_name: victim-server
+    privileged: true
+    networks:
+      - monitoring-net
+
+  attacker-server:
+    build:
+      context: ./attacker-server
+      dockerfile: Dockerfile
+    container_name: attacker-server
+    privileged: true
+    networks:
+      - monitoring-net
+    tty: true
+    stdin_open: true
+
+networks:
+  monitoring-net:
+    driver: bridge
