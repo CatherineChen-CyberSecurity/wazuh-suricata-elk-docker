@@ -50,6 +50,10 @@ sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin d
 # Clone and Start the Environment
 ```bash
 git clone https://github.com/CatherineChen-CyberSecurity/wazuh-suricata-elk-docker.git
+
+# only first time need to execute this command to make all containers connect with each other
+docker network create monitoring-net
+
 cd wazuh-suricata-elk-docker
 docker compose up -d
 

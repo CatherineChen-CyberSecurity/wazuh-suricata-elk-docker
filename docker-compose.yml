@@ -16,7 +16,7 @@ services:
       context: ./victim-server
       dockerfile: Dockerfile
       args:
-        - MANAGER_IP=172.19.0.3
+        - MANAGER_IP=172.21.0.3
     container_name: victim-server
     privileged: true
     networks:
@@ -35,4 +35,4 @@ services:
 
 networks:
   monitoring-net:
-    driver: bridge
+    external: true

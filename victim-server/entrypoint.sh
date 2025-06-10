@@ -1,10 +1,12 @@
 #!/bin/bash
 
-echo "🔧 替換 ossec.conf 裡的 MANAGER_IP..."
-sed -i "s/MANAGER_IP/monitoring-server/" /var/ossec/etc/ossec.conf
+WAZUH_MANAGER_IP="172.21.0.3"
 
-echo "📄 替換後的 ossec.conf (前 20 行)："
+echo "Replace ossec.conf's MANAGER_IP with ${WAZUH_MANAGER_IP}..."
+sed -i "s/MANAGER_IP/${WAZUH_MANAGER_IP}/" /var/ossec/etc/ossec.conf
+
+echo "Replaced ossec.conf："
 head -n 20 /var/ossec/etc/ossec.conf
 
-echo "🚀 啟動 Wazuh Agent..."
+echo "Start Wazuh Agent..."
 exec /var/ossec/bin/wazuh-agentd -f
