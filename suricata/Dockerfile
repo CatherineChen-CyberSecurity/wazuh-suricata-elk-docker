@@ -12,10 +12,10 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean
 
 # copy Suricata Setting（optional）
-# COPY suricata.yaml /etc/suricata/suricata.yaml
+COPY suricata.yaml /etc/suricata/suricata.yaml
 
 # Create the work directory
 WORKDIR /etc/suricata
 
 # Start Suricata instruction
-CMD ["suricata", "-i", "eth0", "-c", "/etc/suricata/suricata.yaml", "-v"]
+CMD ["suricata", "-i", "enp0s3", "-c", "/etc/suricata/suricata.yaml", "-v"]

@@ -54,6 +54,27 @@ git clone https://github.com/CatherineChen-CyberSecurity/wazuh-suricata-elk-dock
 # only first time need to execute this command to make all containers connect with each other
 docker network create monitoring-net
 
+# !To ensure Suricata detects traffic properly, you must replace the interface name in suricata.yaml with your actual Docker bridge interface.
+ip a # Get the actual Docker bridge interface and host vm interface
+# Locate the interface section in ./suricata/suricata.yaml and docker-compose.yml by using the filter "# <-- Replace with your actual bridge interface and your host vm interface" to search
+# Example
+# ./suricata/suricata.yaml
+af-packet:
+  - interface: {}
+
+pcap:
+  - interface: {}
+
+# docker-compose.yml 
+suricata:
+    image: 
+    container_name: 
+    privileged: 
+    network_mode: 
+    volumes:
+    command: ["suricata", "-i", "{}"}, "-c", "/etc/suricata/suricata.yaml", "--init-errors-fatal"] # <-- Replace with your actual bridge interface and your host vm interface
+
+
 cd wazuh-suricata-elk-docker
 docker compose up -d
 
@@ -64,7 +85,7 @@ docker compose up -d
 ---
 
 # Services
-Access Wazuh Dashboard: http://localhost:5601
+Access Wazuh Dashboard: https://localhost/app/wz-home
 
 The attacker and victim containers can communicate over the internal Docker network.
 

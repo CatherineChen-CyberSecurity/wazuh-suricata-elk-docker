@@ -4,23 +4,25 @@ services:
     image: jasonish/suricata:latest
     container_name: suricata
     privileged: true
-    networks:
-      - monitoring-net
+    network_mode: host
     volumes:
       - ./suricata-logs:/var/log/suricata
       - ./suricata/:/etc/suricata/
-    command: ["suricata", "-i", "eth0", "-c", "/etc/suricata/suricata.yaml", "--init-errors-fatal"]
+    command: ["suricata", "-i", "br-69dac5993a57,enp0s3", "-c", "/etc/suricata/suricata.yaml", "--init-errors-fatal"] # <-- Replace with your actual bridge interface and your host vm interface
 
   victim-server:
     build:
       context: ./victim-server
       dockerfile: Dockerfile
-      args:
-        - MANAGER_IP=172.21.0.3
     container_name: victim-server
     privileged: true
+    environment:
+        - MANAGER_IP=172.21.0.4
+    volumes:
+      - ./suricata-logs:/var/log/suricata
     networks:
-      - monitoring-net
+      monitoring-net:
+        ipv4_address: 172.21.0.10
 
   attacker-server:
     build:
@@ -29,7 +31,8 @@ services:
     container_name: attacker-server
     privileged: true
     networks:
-      - monitoring-net
+      monitoring-net:
+        ipv4_address: 172.21.0.11
     tty: true
     stdin_open: true
 

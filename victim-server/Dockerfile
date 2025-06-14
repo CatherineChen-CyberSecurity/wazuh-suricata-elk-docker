@@ -7,6 +7,9 @@ RUN curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | apt-key add - && \
     apt-get update && \
     apt-get install -y wazuh-agent
 
+ARG MANAGER_IP
+ENV MANAGER_IP=${MANAGER_IP}
+
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
