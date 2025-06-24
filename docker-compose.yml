@@ -20,6 +20,7 @@ services:
         - MANAGER_IP=172.21.0.4
     volumes:
       - ./suricata-logs:/var/log/suricata
+      - ./victim-server/config:/config
     networks:
       monitoring-net:
         ipv4_address: 172.21.0.10
