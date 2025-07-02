@@ -26,23 +26,9 @@ First, ensure Docker and Docker Compose are installed (recommended: Docker ≥ 2
 
 Install on Ubuntu:
 ```bash
-sudo apt update
-sudo apt install -y ca-certificates curl gnupg lsb-release
-
-# Add Docker's official GPG key
-sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-
-# add official Docker repository
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
-  https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-# Install the lastest Docker Engine + CLI + Compose v2
-sudo apt update
-sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+# Run the setup script to install Docker
+chmod +x setup.sh
+./setup.sh
 
 ```
 ---
@@ -50,9 +36,10 @@ sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin d
 # Clone and Start the Environment
 ```bash
 git clone https://github.com/CatherineChen-CyberSecurity/wazuh-suricata-elk-docker.git
+cd wazuh-suricata-elk-docker
 
 # only first time need to execute this command to make all containers connect with each other
-docker network create monitoring-net
+docker network create --driver=bridge --subnet=172.21.0.0/16 monitoring-net
 
 # !To ensure Suricata detects traffic properly, you must replace the interface name in suricata.yaml with your actual Docker bridge interface.
 ip a # Get the actual Docker bridge interface and host vm interface
@@ -87,7 +74,7 @@ docker compose up -d
 # Services
 Access Wazuh Dashboard: https://localhost/app/wz-home
 
-The attacker and victim containers can communicate over the internal Docker network.
+The attacker and victim containers can communicate over the internal Docker bridge network (monitoring-net).
 
 ---
 
