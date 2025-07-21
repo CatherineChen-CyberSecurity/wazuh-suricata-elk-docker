@@ -229,7 +229,7 @@ outputs:
             #version: 2
 
             # Enable/disable this logger. Default: enabled.
-            #enabled: yes
+            enabled: yes
 
             # Control logging of requests and responses:
             # - requests: enable logging of DNS queries
@@ -639,7 +639,7 @@ af-packet:
     cluster-type: cluster_flow
     # In some fragmentation cases, the hash can not be computed. If "defrag" is set
     # to yes, the kernel will do the needed defragmentation before sending the packets.
-    defrag: yes
+    defrag: no
     # To use the ring feature of AF_PACKET, set 'use-mmap' to yes
     #use-mmap: yes
     # Lock memory map to avoid it being swapped. Be careful that over
@@ -647,7 +647,7 @@ af-packet:
     #mmap-locked: yes
     # Use tpacket_v3 capture mode, only active if use-mmap is true
     # Don't use it in IPS or TAP mode as it causes severe latency
-    #tpacket-v3: yes
+    tpacket-v3: yes
     # Ring size will be computed with respect to "max-pending-packets" and number
     # of threads. You can set manually the ring size in number of packets by setting
     # the following value. If you are using flow "cluster-type" and have really network
@@ -657,7 +657,7 @@ af-packet:
     # Block size is used by tpacket_v3 only. It should set to a value high enough to contain
     # a decent number of packets. Size is in bytes so please consider your MTU. It should be
     # a power of 2 and it must be multiple of page size (usually 4096).
-    #block-size: 32768
+    block-size: 131072
     # tpacket_v3 block timeout: an open block is passed to userspace if it is not
     # filled after block-timeout milliseconds.
     #block-timeout: 10
@@ -700,7 +700,7 @@ af-packet:
   - interface: default
     #threads: auto
     #use-mmap: no
-    #tpacket-v3: yes
+    tpacket-v3: yes
 
 # Linux high speed af-xdp capture support
 af-xdp:
@@ -2195,7 +2195,7 @@ rule-files:
 
 classification-file: /etc/suricata/classification.config
 reference-config-file: /etc/suricata/reference.config
-# threshold-file: /etc/suricata/threshold.config
+threshold-file: /etc/suricata/threshold.config
 
 ##
 ## Include other configs
