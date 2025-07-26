@@ -7,7 +7,13 @@ services:
     network_mode: host
     volumes:
       - ./suricata-logs:/var/log/suricata
+      - ./suricata/rules/custom.rules:/var/lib/suricata/rules/custom_my.rules
       - ./suricata/:/etc/suricata/
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"
     command: ["suricata", "-i", "br-69dac5993a57,enp0s3", "-c", "/etc/suricata/suricata.yaml", "--init-errors-fatal"] # <-- Replace with your actual bridge interface and your host vm interface
 
   victim-server:

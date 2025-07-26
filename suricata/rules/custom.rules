@@ -1,0 +1,40 @@
+# 1. Nmap SYN Scan
+#alert tcp any any -> $HOME_NET any (msg:"Nmap SYN Scan Detected"; flags:S; sid:1000001; rev:1;)
+#alert tcp any any -> $HOME_NET any (msg:"Custom SCAN - Nmap SYN Scan Detected"; flags:S; threshold:type limit, track by_src, seconds 60, count 5; classtype:attempted-recon; sid:1000001; rev:1;)
+#alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"Custom SCAN - Nmap SYN Scan Detected"; flags:S; threshold:type limit, track by_src, seconds 60, count 5; classtype:attempted-recon; sid:1000001; rev:1;)
+
+# 2. Nmap XMAS Scan
+#alert tcp any any -> $HOME_NET any (msg:"Custom SCAN - Nmap XMAS Scan Detected"; flags:FPU; threshold:type limit, track by_src, seconds 60, count 5; classtype:attempted-recon; sid:1000002; rev:1;)
+#alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"Custom SCAN - Nmap XMAS Scan Detected"; flags:FPU; threshold:type limit, track by_src, seconds 60, count 5; classtype:attempted-recon; sid:1000002; rev:1;)
+
+# 3. SSH Brute Force Attempt (5 fails within 60s)
+#alert tcp any any -> $HOME_NET 22 (msg:"Custom SSH Brute Force Attempt"; flow:to_server,established; content:"SSH-"; threshold:type threshold, track by_src, count 5, seconds 60; classtype:attempted-admin; sid:1000003; rev:1;)
+#alert tcp $EXTERNAL_NET any -> $HOME_NET 22 (msg:"Custom SSH Brute Force Attempt"; flow:to_server,established; content:"SSH-"; threshold:type threshold, track by_src, count 5, seconds 60; classtype:attempted-admin; sid:1000003; rev:1;)
+
+# 4. FTP Login Failure
+#alert tcp any any -> $HOME_NET 21 (msg:"Custom FTP Login Failure Detected"; flow:to_server,established; content:"530 Login incorrect"; classtype:attempted-admin; sid:1000004; rev:1;)
+#alert tcp $EXTERNAL_NET any -> $HOME_NET 21 (msg:"Custom FTP Login Failure Detected"; flow:to_server,established; content:"530 Login incorrect"; classtype:attempted-admin; sid:1000004; rev:1;)
+
+# 5. HTTP on Non-Standard Port
+#alert tcp any any -> $HOME_NET ![80,443] (msg:"Custom HTTP Detected on Non-Standard Port"; flow:to_server,established; content:"HTTP/1."; classtype:policy-violation; sid:1000005; rev:1;)
+#alert tcp $EXTERNAL_NET any -> $HOME_NET ![80,443] (msg:"Custom HTTP Detected on Non-Standard Port"; flow:to_server,established; content:"HTTP/1."; classtype:policy-violation; sid:1000005; rev:1;)
+
+# 6. Possible Command Injection Attempt
+#alert http any any -> $HOME_NET any (msg:"Custom HTTP Possible Command Injection Attempt"; flow:to_server,established; content:"|3B|"; http_uri; classtype:web-application-attack; sid:1000006; rev:1;)
+#alert http $EXTERNAL_NET any -> $HOME_NET any (msg:"Custom HTTP Possible Command Injection Attempt"; flow:to_server,established; content:"|3B|"; http_uri; classtype:web-application-attack; sid:1000006; rev:1;)
+
+# 7. Suspicious User-Agent (curl/wget)
+#alert http any any -> $HOME_NET any (msg:"Custom HTTP Suspicious User-Agent curl/wget"; flow:to_server,established; content:"User-Agent|3A| curl"; http_header; classtype:attempted-recon; sid:1000007; rev:1;)
+#alert http $EXTERNAL_NET any -> $HOME_NET any (msg:"Custom HTTP Suspicious User-Agent curl/wget"; flow:to_server,established; content:"User-Agent|3A| Wget"; http_header; classtype:attempted-recon; sid:1000008; rev:1;)
+
+# 8. DNS Query to Suspicious Domain
+#alert udp $HOME_NET any -> $EXTERNAL_NET 53 (msg:"Custom DNS Query for Suspicious Domain"; content:"bad-domain.com"; nocase; classtype:trojan-activity; sid:1000009; rev:1;)
+
+# 9. Dos attack
+alert tcp any any -> any 80 (msg:"Custom DOS Detection - SYN Flood Detected"; flags:S; flow:to_server; threshold:type limit, track by_src, count 50, seconds 10; classtype:attempted-dos; sid:1001002; rev:1;)
+
+alert icmp any any -> $HOME_NET any (msg:"Custom ICMP Flood Detected"; itype:8; threshold:type limit, track by_src, seconds 10, count 20; classtype:icmp-event; sid:2000001; rev:1;)
+
+alert udp any any -> $HOME_NET 53 (msg:"Custom UDP Flood to DNS Port Detected"; threshold:type limit, track by_src, seconds 10, count 20; classtype:attempted-dos; sid:2000002; rev:2;)
+
+alert tcp any any -> $HOME_NET 80 (msg:"Custom TCP SYN with Payload (Abnormal HTTP Request)"; flags:S; flow:to_server; dsize:>0; classtype:protocol-command-decode; sid:2000003; rev:2;)
