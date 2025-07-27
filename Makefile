@@ -1,12 +1,31 @@
-BRIDGE_IF := $(shell ip -o link show | awk -F': ' '{print $$2}' | grep '^br-' | head -n 1)
-HOST_IF := $(shell ip -o -4 addr show | awk '!/docker|br-|veth|127.0.0.1/ {print $$2}' | head -n 1)
+BRIDGE_IF = $(shell ip -o link show | awk -F': ' '{print $$2}' | grep '^br-' | head -n 1)
+HOST_IF = $(shell ip -o -4 addr show | awk '!/docker|br-|veth|127.0.0.1/ {print $$2}' | head -n 1)
 
-deploy:
+setup:
 	@echo "Running setup.sh to ensure Docker is installed..."
 	@if ! command -v docker >/dev/null 2>&1; then \
 		chmod +x setup.sh; ./setup.sh; \
 	else \
 		echo "Docker already installed, skipping setup.sh"; \
+	fi
+
+	@echo "Ensuring monitoring-net Docker network exists..."
+	@if ! docker network inspect monitoring-net >/dev/null 2>&1; then \
+		echo "Creating monitoring-net network..."; \
+		docker network create --driver=bridge --subnet=172.21.0.0/16 monitoring-net; \
+	else \
+		echo "Docker network monitoring-net already exists."; \
+	fi
+
+deploy:
+
+	@sysctl -w vm.max_map_count=262144
+	
+	@if [ -z "$(BRIDGE_IF)" ]; then \
+		echo "Error: No Docker bridge interface found."; exit 1; \
+	fi
+	@if [ -z "$(HOST_IF)" ]; then \
+		echo "Error: No Host interface found."; exit 1; \
 	fi
 
 	@echo "Docker Bridge Interface: $(BRIDGE_IF)"
@@ -24,8 +43,15 @@ deploy:
 		echo "Template docker-compose.yml.template not found!"; exit 1; \
 	fi
 
-	@docker compose up -d
-	@cd wazuh-server && docker compose up -d
+	@if [ ! -f docker-compose.yml ]; then \
+		echo "docker-compose.yml not found after generation!"; exit 1; \
+	fi
+
+	@echo "Generating Wazuh Indexer certificates..."
+	@docker compose -f wazuh-server/generate-indexer-certs.yml run --rm generator || { echo "Certificate generation failed."; exit 1; }
+
+	@docker compose up -d || { echo "Docker Compose failed to start."; exit 1; }
+	@cd wazuh-server && docker compose up -d || { echo "Failed to start wazuh-server containers."; exit 1; }
 
 up:
 	@docker compose up -d

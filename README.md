@@ -18,56 +18,62 @@ This project sets up a simulated Security Operations Center (SOC) environment us
 
 ---
 
+# Clone and Start the Environment
+```bash
+git clone https://github.com/CatherineChen-CyberSecurity/wazuh-suricata-elk-docker.git
+cd wazuh-suricata-elk-docker
+```
+---
 ## Setup & Deployment
 
 ### Install Docker and Docker Compose
 
 First, ensure Docker and Docker Compose are installed (recommended: Docker ≥ 20.x, Compose ≥ 2.x):
 
-Install on Ubuntu:
+Install make
 ```bash
-# Run the setup script to install Docker
-chmod +x setup.sh
-./setup.sh
-
+sudo apt update
+sudo apt install -y make
 ```
----
 
-# Clone and Start the Environment
+Using Makefile to Deploy and Manage the Environment
+This project provides a Makefile to simplify the setup, startup, shutdown, and cleanup of the Docker containers. Make sure you have Docker, Docker Compose, and make installed on your system.
+
+1. Setup Environment (Install Docker and Create Docker Network)
 ```bash
-git clone https://github.com/CatherineChen-CyberSecurity/wazuh-suricata-elk-docker.git
-cd wazuh-suricata-elk-docker
-
-# only first time need to execute this command to make all containers connect with each other
-docker network create --driver=bridge --subnet=172.21.0.0/16 monitoring-net
-
-# !To ensure Suricata detects traffic properly, you must replace the interface name in suricata.yaml with your actual Docker bridge interface.
-ip a # Get the actual Docker bridge interface and host vm interface
-# Locate the interface section in ./suricata/suricata.yaml and docker-compose.yml by using the filter "# <-- Replace with your actual bridge interface and your host vm interface" to search
-# Example
-# ./suricata/suricata.yaml
-af-packet:
-  - interface: {}
-
-pcap:
-  - interface: {}
-
-# docker-compose.yml 
-suricata:
-    image: 
-    container_name: 
-    privileged: 
-    network_mode: 
-    volumes:
-    command: ["suricata", "-i", "{}"}, "-c", "/etc/suricata/suricata.yaml", "--init-errors-fatal"] # <-- Replace with your actual bridge interface and your host vm interface
-
-
-cd wazuh-suricata-elk-docker
-docker compose up -d
-
-cd wazuh-server
-docker compose up -d
+sudo make setup
 ```
+- Installs Docker via setup.sh if not already installed.
+- Checks if the Docker network monitoring-net exists; creates it if missing.
+
+2. Deploy the Full Environment
+```bash
+sudo make deploy
+```
+This command will:
+
+- Set the system parameter vm.max_map_count=262144 required by Wazuh Indexer.
+- Automatically detect the Docker Bridge and Host network interfaces.
+- Generate the Suricata configuration file (suricata.yaml) and docker-compose.yml with the correct interfaces.
+- Generate Wazuh certificates using Docker Compose.
+- Start all necessary containers (Wazuh Manager, Indexer, Dashboard, Suricata, attacker, and victim servers).
+
+3. Start Containers
+```bash
+make up
+```
+Starts the Docker Compose containers in detached mode.
+
+4. Stop Containers
+```bash
+make down
+```
+
+5. Clean Up Environment
+```bash
+make clean
+```
+Stops and removes containers and associated Docker volumes — useful for a full reset.
 
 ---
 

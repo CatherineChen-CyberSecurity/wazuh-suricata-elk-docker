@@ -2,6 +2,9 @@
 
 set -e
 
+echo "Checking available disk space..."
+df -h /
+
 echo "Removing old Docker versions (if any)..."
 sudo apt remove -y docker docker.io containerd runc || true
 
@@ -47,5 +50,10 @@ echo "    newgrp docker"
 echo "to apply group changes."
 echo ""
 
-docker --version
-docker compose version
+if command -v docker >/dev/null 2>&1; then
+  docker --version
+  docker compose version
+else
+  echo "Docker installation failed or docker binary not in PATH."
+  exit 1
+fi
