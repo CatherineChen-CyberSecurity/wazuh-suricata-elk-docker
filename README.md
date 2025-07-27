@@ -11,7 +11,7 @@ This project sets up a simulated Security Operations Center (SOC) environment us
 
 | Container Name      | Role                  | Installed Tools                                                                 |
 |---------------------|-----------------------|----------------------------------------------------------------------------------|
-| `monitoring-server` | SOC Monitor       | Wazuh Manager + Elasticsearch + Kibana (log analysis and visualization)         |
+| `wazuh-server-wazuh.manager-1` | SOC Monitor       | Wazuh Manager + Elasticsearch + Kibana (log analysis and visualization)         |
 | `victim-server`     | Attack Target       | Ubuntu + Wazuh Agent (log collection + attack simulation)                        |
 | `attacker-server`   | Attacker Simulator  | Kali Linux + Nmap + Metasploit + Scapy (launch attacks on victim-server)        |
 | `suricata`          | IDS (Detection)     | Suricata (analyze traffic and generate alerts for Wazuh)                        |
