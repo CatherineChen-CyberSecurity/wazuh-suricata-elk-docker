@@ -1,0 +1,19 @@
+# Kindly copy this file, rename it to .env, and place it in the wazuh-server folder.
+INDEXER_URL=https://wazuh.indexer:9200
+INDEXER_USERNAME={YOUR USERNAME}
+INDEXER_PASSWORD={YOUR PASSWORD}
+
+API_USERNAME={YOUR USERNAME}
+API_PASSWORD={YOUR PASSWORD}
+
+FILEBEAT_SSL_VERIFICATION_MODE=full
+SSL_CERTIFICATE_AUTHORITIES=/etc/ssl/root-ca.pem
+SSL_CERTIFICATE=/etc/ssl/filebeat.pem
+SSL_KEY=/etc/ssl/filebeat.key
+
+DASHBOARD_USERNAME={YOUR USERNAME}
+DASHBOARD_PASSWORD={YOUR PASSWORD}
+
+OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g
+
+WAZUH_API_URL=https://wazuh.manager

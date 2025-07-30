@@ -35,8 +35,10 @@ Install make
 sudo apt update
 sudo apt install -y make
 ```
+### Set up .env
+#### Kindly copy env_template, rename it to .env, and place it in the wazuh-server folder.
 
-Using Makefile to Deploy and Manage the Environment
+### Using Makefile to Deploy and Manage the Environment
 This project provides a Makefile to simplify the setup, startup, shutdown, and cleanup of the Docker containers. Make sure you have Docker, Docker Compose, and make installed on your system.
 
 1. Setup Environment (Install Docker and Create Docker Network)
