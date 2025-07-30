@@ -95,6 +95,9 @@ Suricata: High-performance IDS/IPS that detects malicious network activity.
 
 Kali Linux: Penetration testing distribution including tools like Metasploit, Nmap, and Scapy.
 
+---
+## Documentation
+- [Operation Manual (PDF)](docs/Operation_Manual.pdf)
 
 
 
